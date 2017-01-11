@@ -1,113 +1,391 @@
-#include <iostream>
-#include <string>
-#include <stdlib.h>
-
-
+#include<bits/stdc++.h>
 using namespace std;
 
-int contor_bombe, verificax, verificay;
-const int dimensiunex = 16, dimensiuney = 16;
-bool pierdere;
+#define INCEPATOR 0
+#define INTERMEDIAR 1
+#define AVANSAT 2
+#define DIMENSIUNEMAXIMA 25
+#define NUMARMAXIMMINE 99
+#define DIMENSIUNEATABLEI 526
 
-class Grila{;
-public:
-    bool areBomba, marcat;
-     Grila(void) {
-        areBomba = false;
-         marcat = false;
-                 }
-};
-int c=25-dimensiunex;
-void desenareChenar( Grila chenar[dimensiunex][dimensiuney])
+int DIMENSIUNE ;
+int MINE ;
+
+
+bool esteValid(int rand, int coloana)
+{
+
+    return (rand >= 0) && (rand < DIMENSIUNE) &&
+           (coloana >= 0) && (coloana < DIMENSIUNE);
+}
+
+
+bool esteMina (int rand, int coloana, char tabla[][DIMENSIUNEMAXIMA])
+{
+    if (tabla[rand][coloana] == '*')
+        return (true);
+    else
+        return (false);
+}
+
+
+void faMutare(int *x, int *y)
+{
+
+    printf("Introduceti coordonatele randului si coloanei, separate prin spatiu ( rand coloana): ");
+    scanf("%d %d", x, y);
+    return;
+}
+
+
+void afisareTabla(char tablaMea[][DIMENSIUNEMAXIMA])
 { system("cls");
-   cout<<"  _";
-    for(int i=97;i<122-c;i++)
+    int i, j;
+
+    printf ("   ");
+
+    for (i=0; i<DIMENSIUNE; i++)
+        printf ("%d ", i);
+
+    printf ("\n\n");
+
+    for (i=0; i<DIMENSIUNE; i++)
     {
-    cout<<char(i)<<"_";
+      if(i<10) cout<<" "<<i<<" ";
+       else cout<<i<<" ";
+
+
+        for (j=0; j<DIMENSIUNE; j++)
+            printf ("%c ", tablaMea[i][j]);
+        printf ("\n");
     }
-    cout<<endl;
-
-for(int y=0;y<dimensiuney;y++)
-{   if(y<=9){
-    cout<<" "<<y<<"|";
-             }
-             else cout<<y<<"|";
-for(int x=0;x<dimensiunex;x++)
-{
-if(chenar[x][y].areBomba&&chenar[x][y].marcat)
-{
-   cout<<"!|" ;
-}
-if(chenar[x][y].areBomba)
-{
-    cout<<"*|";
-}
- else if(chenar[x][y].marcat)
- {
-     cout<<"x|";
- }
-else
-{
-    cout<<"_|";
-}
-     }
-    cout<<endl;
-   }
+    return;
 }
 
 
+int numarMineApropiate(int rand, int coloana, int mine[][2],
+                      char tablaReala[][DIMENSIUNEMAXIMA])
+{
+
+    int i;
+    int count = 0;
 
 
+        if (esteValid (rand-1, coloana) == true)
+        {
+               if (esteMina (rand-1, coloana, tablaReala) == true)
+               count++;
+        }
+
+
+        if (esteValid (rand+1, coloana) == true)
+        {
+               if (esteMina (rand+1, coloana, tablaReala) == true)
+               count++;
+        }
+
+
+        if (esteValid (rand, coloana+1) == true)
+        {
+            if (esteMina (rand, coloana+1, tablaReala) == true)
+               count++;
+        }
+
+
+        if (esteValid (rand, coloana-1) == true)
+        {
+               if (esteMina (rand, coloana-1, tablaReala) == true)
+               count++;
+        }
+
+
+        if (esteValid (rand-1, coloana+1) == true)
+        {
+            if (esteMina (rand-1, coloana+1, tablaReala) == true)
+               count++;
+        }
+
+
+        if (esteValid (rand-1, coloana-1) == true)
+        {
+             if (esteMina (rand-1, coloana-1, tablaReala) == true)
+               count++;
+        }
+
+
+        if (esteValid (rand+1, coloana+1) == true)
+        {
+               if (esteMina (rand+1, coloana+1, tablaReala) == true)
+               count++;
+        }
+
+
+        if (esteValid (rand+1, coloana-1) == true)
+        {
+            if (esteMina (rand+1, coloana-1, tablaReala) == true)
+               count++;
+        }
+
+    return (count);
+}
+
+
+bool continuaJocul(char tablaMea[][DIMENSIUNEMAXIMA], char tablaReala[][DIMENSIUNEMAXIMA],
+            int mine[][2], int rand, int coloana, int *miscariRamase)
+{
+
+    if (tablaMea[rand][coloana] != '-')
+        return (false);
+
+    int i, j;
+
+    if (tablaReala[rand][coloana] == '*')
+    {
+        tablaMea[rand][coloana]='*';
+
+        for (i=0; i<MINE; i++)
+            tablaMea[mine[i][0]][mine[i][1]]='*';
+
+        afisareTabla (tablaMea);
+        printf ("\nAti declansat o mina. Jocul a luat sfarsit!\n");
+        return (true) ;
+    }
+
+    else
+     {
+
+        int count = numarMineApropiate(rand, coloana, mine, tablaReala);
+        (*miscariRamase)--;
+
+        tablaMea[rand][coloana] = count + '0';
+
+        if (!count)
+        {
+
+            if (esteValid (rand-1, coloana) == true)
+            {
+                   if (esteMina (rand-1, coloana, tablaReala) == false)
+                   continuaJocul(tablaMea, tablaReala, mine, rand-1, coloana, miscariRamase);
+            }
+
+
+            if (esteValid (rand+1, coloana) == true)
+            {
+                   if (esteMina (rand+1, coloana, tablaReala) == false)
+                    continuaJocul(tablaMea, tablaReala, mine, rand+1, coloana, miscariRamase);
+            }
+
+
+            if (esteValid (rand, coloana+1) == true)
+            {
+                if (esteMina (rand, coloana+1, tablaReala) == false)
+                    continuaJocul(tablaMea, tablaReala, mine, rand, coloana+1, miscariRamase);
+            }
+
+
+            if (esteValid (rand, coloana-1) == true)
+            {
+                   if (esteMina (rand, coloana-1, tablaReala) == false)
+                    continuaJocul(tablaMea, tablaReala, mine, rand, coloana-1, miscariRamase);
+            }
+
+
+            if (esteValid (rand-1, coloana+1) == true)
+            {
+                if (esteMina (rand-1, coloana+1, tablaReala) == false)
+                    continuaJocul(tablaMea, tablaReala, mine, rand-1, coloana+1, miscariRamase);
+            }
+
+
+            if (esteValid (rand-1, coloana-1) == true)
+            {
+                 if (esteMina (rand-1, coloana-1, tablaReala) == false)
+                    continuaJocul(tablaMea, tablaReala, mine, rand-1, coloana-1, miscariRamase);
+            }
+
+
+            if (esteValid (rand+1, coloana+1) == true)
+            {
+                 if (esteMina (rand+1, coloana+1, tablaReala) == false)
+                    continuaJocul(tablaMea, tablaReala, mine, rand+1, coloana+1, miscariRamase);
+            }
+
+
+            if (esteValid (rand+1, coloana-1) == true)
+            {
+                if (esteMina (rand+1, coloana-1, tablaReala) == false)
+                    continuaJocul(tablaMea, tablaReala, mine, rand+1, coloana-1, miscariRamase);
+            }
+        }
+
+        return (false);
+    }
+}
+
+
+void plaseazaMine(int mine[][2], char tablaReala[][DIMENSIUNEMAXIMA])
+{
+    bool marcheaza[DIMENSIUNEMAXIMA*DIMENSIUNEMAXIMA];
+
+    memset (marcheaza, false, sizeof (marcheaza));
+
+
+    for (int i=0; i<MINE; )
+     {
+        int aleator = rand() % (DIMENSIUNE*DIMENSIUNE);
+        int x = aleator / DIMENSIUNE;
+        int y = aleator % DIMENSIUNE;
+
+
+        if (marcheaza[aleator] == false)
+        {
+
+            mine[i][0]= x;
+
+            mine[i][1] = y;
+
+
+            tablaReala[mine[i][0]][mine[i][1]] = '*';
+            marcheaza[aleator] = true;
+            i++;
+        }
+    }
+
+    return;
+}
+
+
+void initializeaza(char tablaReala[][DIMENSIUNEMAXIMA], char tablaMea[][DIMENSIUNEMAXIMA])
+{
+
+    srand(time (NULL));
+
+
+    for (int i=0; i<DIMENSIUNE; i++)
+    {
+        for (int j=0; j<DIMENSIUNE; j++)
+        {
+            tablaMea[i][j] = tablaReala[i][j] = '-';
+        }
+    }
+
+    return;
+}
+
+
+void Triseaza (char tablaReala[][DIMENSIUNEMAXIMA])
+{
+    printf ("Locatie minelor este :-\n");
+    afisareTabla (tablaReala);
+    return;
+}
+
+
+void inlocuiesteMine (int rand, int coloana, char tabla[][DIMENSIUNEMAXIMA])
+{
+    for (int i=0; i<DIMENSIUNE; i++)
+    {
+        for (int j=0; j<DIMENSIUNE; j++)
+            {
+
+                if (tabla[i][j] != '*')
+                {
+                    tabla[i][j] = '*';
+                    tabla[rand][coloana] = '-';
+                    return;
+                }
+            }
+    }
+    return;
+}
+
+
+void joacaJocul ()
+{
+
+    bool gameOver = false;
+
+
+    char tablaReala[DIMENSIUNEMAXIMA][DIMENSIUNEMAXIMA], tablaMea[DIMENSIUNEMAXIMA][DIMENSIUNEMAXIMA];
+
+    int miscariRamase = DIMENSIUNE * DIMENSIUNE - MINE, x, y;
+    int mine[NUMARMAXIMMINE][2];
+
+      initializeaza (tablaReala, tablaMea);
+
+
+    plaseazaMine (mine, tablaReala);
+
+
+
+    int miscare = 0;
+    while (gameOver == false)
+     {
+        printf ("Starea curenta a jocului: \n");
+        afisareTabla (tablaMea);
+        faMutare (&x, &y);
+
+
+        if (miscare == 0)
+        {
+
+            if (esteMina (x, y, tablaReala) == true)
+                inlocuiesteMine (x, y, tablaReala);
+        }
+
+        miscare ++;
+
+        gameOver = continuaJocul (tablaMea, tablaReala, mine, x, y, &miscariRamase);
+
+        if ((gameOver == false) && (miscariRamase == 0))
+         {
+            printf ("\nYou won !\n");
+            gameOver = true;
+         }
+    }
+    return;
+}
+
+void nivelulDeDificultate ()
+{
+
+    int nivel;
+
+    printf ("Alegeti nivelul de dificultate:\n");
+    printf ("*Introduceti 0 pentru INCEPATOR (9 * 9 Celule si 10 mine)\n");
+    printf ("*Introduceti 1 pentru INTERMEDIAR (16 * 16 Celule si 40 mine)\n");
+    printf ("*Introduceti 2 pentru AVANSAT (24 * 24 Celule si 99 mine)\n");
+
+    scanf ("%d", &nivel);
+   if (nivel == INCEPATOR)
+
+    {
+        DIMENSIUNE = 9;
+        MINE = 10;
+    }
+
+    if (nivel == INTERMEDIAR)
+    {
+        DIMENSIUNE = 16;
+        MINE = 40;
+    }
+
+    if (nivel == AVANSAT)
+    {
+        DIMENSIUNE = 24;
+        MINE = 99;
+    }
+
+    return;
+}
 
 
 int main()
-{int numar=1;
-char d;
-  pierdere=false;
-  contor_bombe=2*dimensiunex;
-    verificax=0;
-    verificay=0;
-    Grila tablaDeJoc[dimensiunex][dimensiuney];
-    for(int i=0;i<contor_bombe;i++)
-    {
-        int pozitiex=rand() % dimensiunex;
-        int pozitiey=rand() % dimensiuney;
-        if(tablaDeJoc[pozitiex][pozitiey].areBomba==false){
-            tablaDeJoc[pozitiex][pozitiey].areBomba=true;
-        }
-        else
-        {
-            i--;
-        }
-    }
-    desenareChenar(tablaDeJoc);
-     cout<<endl;
+{
 
-while(pierdere!=true)
-    {
-        cout<<endl;
-        cout<<"Numar total de mine:"<<contor_bombe<<endl;
-        cout<<"Numar mine marcate:"<<numar<<endl;
-        cout<<endl;
-        cout<<"Introduceti coordonata lui X."<<endl;
-        cin>>d;
-        cout<<"Introduceti coordonata lui Y."<<endl;
-        cin>>verificay;
+    nivelulDeDificultate ();
 
-        if(tablaDeJoc[verificax][verificay].marcat==true)
-        {
-            cout<<"Boom!"<<endl;
-            pierdere=true;
-        }
-       else
-       {
-           cout<<"Mai incercati."<<endl;
-       }
-       tablaDeJoc[verificax][verificay].marcat=true;
-       cout<<endl;
-       desenareChenar(tablaDeJoc);
-       cout<<endl;
-    }
+    joacaJocul ();
 
-return 0;
+    return (0);
 }
