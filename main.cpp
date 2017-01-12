@@ -1,4 +1,5 @@
 #include<bits/stdc++.h>
+#include <limits>
 using namespace std;
 
 #define INCEPATOR 0
@@ -28,27 +29,34 @@ bool esteMina (int rand, int coloana, char tabla[][DIMENSIUNEMAXIMA])
         return (false);
 }
 
+void faMutare(int *x, int *y){
+char c;
 
-void faMutare(int *x, int *y)
-{
+    printf("Introduceti coordonatele randului si coloanei (rand coloana): " );
+    scanf("%d",x);
+    cin>>c;
 
-    printf("Introduceti coordonatele randului si coloanei, separate prin spatiu ( rand coloana): ");
-    scanf("%d %d", x, y);
-    return;
+    *y=int(c)-97;
+
+
 }
 
 
 void afisareTabla(char tablaMea[][DIMENSIUNEMAXIMA])
-{ system("cls");
+{system("cls");
+
     int i, j;
+printf ("Starea curenta a jocului: \n \n");
+printf("  ");
 
-    printf ("   ");
+    printf (" ");
 
-    for (i=0; i<DIMENSIUNE; i++)
-        printf ("%d ", i);
-
-    printf ("\n\n");
-
+    for (char i='a'; i<'a'+DIMENSIUNE; i++)
+cout<<i<<" ";
+    printf ("\n");
+    printf("  ");
+for(int i=0;i<DIMENSIUNE;i++) printf(" _");
+printf("\n");
     for (i=0; i<DIMENSIUNE; i++)
     {
       if(i<10) cout<<" "<<i<<" ";
@@ -59,6 +67,7 @@ void afisareTabla(char tablaMea[][DIMENSIUNEMAXIMA])
             printf ("%c ", tablaMea[i][j]);
         printf ("\n");
     }
+
     return;
 }
 
@@ -67,7 +76,6 @@ int numarMineApropiate(int rand, int coloana, int mine[][2],
                       char tablaReala[][DIMENSIUNEMAXIMA])
 {
 
-    int i;
     int count = 0;
 
 
@@ -137,7 +145,7 @@ bool continuaJocul(char tablaMea[][DIMENSIUNEMAXIMA], char tablaReala[][DIMENSIU
     if (tablaMea[rand][coloana] != '-')
         return (false);
 
-    int i, j;
+    int i;
 
     if (tablaReala[rand][coloana] == '*')
     {
@@ -222,7 +230,6 @@ bool continuaJocul(char tablaMea[][DIMENSIUNEMAXIMA], char tablaReala[][DIMENSIU
     }
 }
 
-
 void plaseazaMine(int mine[][2], char tablaReala[][DIMENSIUNEMAXIMA])
 {
     bool marcheaza[DIMENSIUNEMAXIMA*DIMENSIUNEMAXIMA];
@@ -273,13 +280,6 @@ void initializeaza(char tablaReala[][DIMENSIUNEMAXIMA], char tablaMea[][DIMENSIU
 }
 
 
-void Triseaza (char tablaReala[][DIMENSIUNEMAXIMA])
-{
-    printf ("Locatie minelor este :-\n");
-    afisareTabla (tablaReala);
-    return;
-}
-
 
 void inlocuiesteMine (int rand, int coloana, char tabla[][DIMENSIUNEMAXIMA])
 {
@@ -321,7 +321,7 @@ void joacaJocul ()
     int miscare = 0;
     while (gameOver == false)
      {
-        printf ("Starea curenta a jocului: \n");
+
         afisareTabla (tablaMea);
         faMutare (&x, &y);
 
@@ -339,24 +339,38 @@ void joacaJocul ()
 
         if ((gameOver == false) && (miscariRamase == 0))
          {
-            printf ("\nYou won !\n");
+            printf ("\nFelicitari!\n");
             gameOver = true;
          }
     }
     return;
 }
-
-void nivelulDeDificultate ()
-{
-
-    int nivel;
-
+ int verificaInput()
+ {bool valid=false;
+ int x;
+ while(!valid){
     printf ("Alegeti nivelul de dificultate:\n");
     printf ("*Introduceti 0 pentru INCEPATOR (9 * 9 Celule si 10 mine)\n");
     printf ("*Introduceti 1 pentru INTERMEDIAR (16 * 16 Celule si 40 mine)\n");
     printf ("*Introduceti 2 pentru AVANSAT (24 * 24 Celule si 99 mine)\n");
+     cin>>x;
+     if(cin.good())
+        {
+        valid=true;
+        }
 
-    scanf ("%d", &nivel);
+    else {
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(),'\n');
+        cout<<"Ati introdus o valoare invalida, reincercati."<<endl;
+    }
+ }
+
+  return x;
+ }
+void nivelulDeDificultate ()
+{int nivel=verificaInput();
+
    if (nivel == INCEPATOR)
 
     {
@@ -377,7 +391,9 @@ void nivelulDeDificultate ()
     }
 
     return;
+
 }
+
 
 
 int main()
