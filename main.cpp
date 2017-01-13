@@ -1,10 +1,9 @@
 #include<bits/stdc++.h>
-#include <limits>
 using namespace std;
 
-#define INCEPATOR 0
-#define INTERMEDIAR 1
-#define AVANSAT 2
+#define INCEPATOR 1
+#define INTERMEDIAR 2
+#define AVANSAT 3
 #define DIMENSIUNEMAXIMA 25
 #define NUMARMAXIMMINE 99
 #define DIMENSIUNEATABLEI 526
@@ -30,15 +29,19 @@ bool esteMina (int rand, int coloana, char tabla[][DIMENSIUNEMAXIMA])
 }
 
 void faMutare(int *x, int *y){
-char c;
+char c[100];
 
-    printf("Introduceti coordonatele randului si coloanei (rand coloana): " );
+    printf("Introduceti coordonatele randului si a coloanei (rand coloana): " );
     scanf("%d",x);
     cin>>c;
 
-    *y=int(c)-97;
-
-
+if(strlen(c)!=1 || (*x<0 || *x> DIMENSIUNE)){while(strlen(c)!=1){
+    printf("Introduceti coordonatele randului si a coloanei (rand coloana): " );
+    scanf("%d",x);
+    cin>>c;
+}
+}
+*y=int(c[0])-97;
 }
 
 
@@ -318,7 +321,7 @@ void joacaJocul ()
 
 
 
-    int miscare = 0;
+    int miscari = 0;
     while (gameOver == false)
      {
 
@@ -326,14 +329,14 @@ void joacaJocul ()
         faMutare (&x, &y);
 
 
-        if (miscare == 0)
+        if (miscari == 0)
         {
 
             if (esteMina (x, y, tablaReala) == true)
                 inlocuiesteMine (x, y, tablaReala);
         }
 
-        miscare ++;
+        miscari ++;
 
         gameOver = continuaJocul (tablaMea, tablaReala, mine, x, y, &miscariRamase);
 
@@ -350,11 +353,11 @@ void joacaJocul ()
  int x;
  while(!valid){
     printf ("Alegeti nivelul de dificultate:\n");
-    printf ("*Introduceti 0 pentru INCEPATOR (9 * 9 Celule si 10 mine)\n");
-    printf ("*Introduceti 1 pentru INTERMEDIAR (16 * 16 Celule si 40 mine)\n");
-    printf ("*Introduceti 2 pentru AVANSAT (24 * 24 Celule si 99 mine)\n");
+    printf ("*Introduceti 1 pentru INCEPATOR (9 * 9 Celule si 10 mine)\n");
+    printf ("*Introduceti 2 pentru INTERMEDIAR (16 * 16 Celule si 40 mine)\n");
+    printf ("*Introduceti 3 pentru AVANSAT (24 * 24 Celule si 99 mine)\n");
      cin>>x;
-     if(cin.good())
+     if((cin.good())&&(x>=1&&x<=3))
         {
         valid=true;
         }
@@ -362,8 +365,9 @@ void joacaJocul ()
     else {
         cin.clear();
         cin.ignore(numeric_limits<streamsize>::max(),'\n');
+        printf("\n");
         cout<<"Ati introdus o valoare invalida, reincercati."<<endl;
-    }
+         }
  }
 
   return x;
