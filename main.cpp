@@ -31,12 +31,12 @@ bool esteMina (int rand, int coloana, char tabla[][DIMENSIUNEMAXIMA])
 void faMutare(int *x, int *y){
 char c[100];
 
-    printf("Introduceti coordonatele randului si a coloanei (rand coloana): " );
+    printf("Introduceti coordonatele randului si a coloanei, apoi apasati tasta ENTER (rand coloana): " );
     scanf("%d",x);
     cin>>c;
 
 if(strlen(c)!=1 || (*x<0 || *x> DIMENSIUNE)){while(strlen(c)!=1){
-    printf("Introduceti coordonatele randului si a coloanei (rand coloana): " );
+    printf("Reintroduceti coordonatele randului si a coloanei, apoi apasati tasta ENTER (rand coloana): " );
     scanf("%d",x);
     cin>>c;
 }
